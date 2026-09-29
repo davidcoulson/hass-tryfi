@@ -3,7 +3,9 @@ import logging
 import voluptuous as vol
 from homeassistant import config_entries, core, exceptions
 from homeassistant.core import callback
-from pytryfi import PyTryFi
+from pytryfi import PyTryFi  # noqa: F401 - kept for the type
+
+from .client import make_client
 
 from . import CannotConnect, async_connect_or_timeout
 from .const import (  # pylint:disable=unused-import
@@ -45,7 +47,7 @@ async def validate_input(hass: core.HomeAssistant, data: dict):
         raise InvalidPolling
     try:
         #tryfi = PyTryFi(username=data[CONF_USERNAME], password=data[CONF_PASSWORD])
-        tryfi = await hass.async_add_executor_job(PyTryFi, data[CONF_USERNAME], data[CONF_PASSWORD])
+        tryfi = await hass.async_add_executor_job(make_client, data[CONF_USERNAME], data[CONF_PASSWORD])
     except:
         raise CannotConnect
 

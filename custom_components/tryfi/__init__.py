@@ -16,7 +16,9 @@ from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
     UpdateFailed,
 )
-from pytryfi import PyTryFi
+from pytryfi import PyTryFi  # noqa: F401 - kept for the type
+
+from .client import make_client
 
 from .const import (
     CONF_PASSWORD,
@@ -36,7 +38,7 @@ async def async_setup(hass: HomeAssistant, config: dict):
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    tryfi = await hass.async_add_executor_job(PyTryFi,entry.data["username"], entry.data["password"])
+    tryfi = await hass.async_add_executor_job(make_client, entry.data["username"], entry.data["password"])
     hass.data[DOMAIN][entry.entry_id] = tryfi
 
     # Exceptions are swallowed in the PyTryFi library, so we must assert a 
